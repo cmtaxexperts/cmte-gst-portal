@@ -1,1 +1,781 @@
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxM4G2bplwQ26st-D7nJuySvLoS4o1hmZdrkC31W0MQ6hHhG2NYexokfHa-BwYAfpsl/exec";
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GST Registration Form - CM Tax Experts</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=Montserrat:wght@400;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .font-display {
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #D60000 0%, #333333 100%);
+      position: relative;
+    }
+    
+    .gradient-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        repeating-linear-gradient(45deg, rgba(245, 242, 238, 0.03) 0px, rgba(245, 242, 238, 0.03) 2px, transparent 2px, transparent 4px),
+        repeating-linear-gradient(-45deg, rgba(245, 242, 238, 0.03) 0px, rgba(245, 242, 238, 0.03) 2px, transparent 2px, transparent 4px),
+        repeating-linear-gradient(0deg, rgba(245, 242, 238, 0.02) 0px, rgba(245, 242, 238, 0.02) 1px, transparent 1px, transparent 2px);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    
+    .glass-effect {
+      background: #FFFFFF;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(214, 0, 0, 0.15);
+    }
+    
+    .input-field {
+      transition: all 0.3s ease;
+    }
+    
+    .input-field:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(214, 0, 0, 0.15);
+      border-color: #D60000;
+    }
+    
+    .partner-card {
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .submit-btn {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .submit-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    
+    .submit-btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    
+    .floating-shape {
+      position: absolute;
+      opacity: 0.1;
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
+    
+    .success-checkmark {
+      animation: scaleIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    
+    @keyframes scaleIn {
+      0% { transform: scale(0) rotate(0deg); }
+      50% { transform: scale(1.1) rotate(180deg); }
+      100% { transform: scale(1) rotate(360deg); }
+    }
+    
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top: 3px solid white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full overflow-auto">
+  <div id="app-wrapper" class="min-h-full w-full gradient-bg relative">
+   <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12"><!-- Header -->
+    <header class="mb-8 md:mb-12"><!-- Logo and Company Name in Top Right -->
+     <div class="flex justify-end items-center gap-4 mb-8">
+      <div id="logo-container" class="w-[256px] h-[256px] relative group"><img id="logo-image" src="https://i.ibb.co/5gvnHQMT/CMTE-LOGI-IN-DARK-BG.png" alt="Company Logo" loading="lazy" class="w-full h-full object-contain" onerror="console.error('Logo failed to load:', this.src); this.style.display='none'; document.getElementById('logo-container').classList.add('hidden');">
+       <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
+        <p class="text-white text-sm text-center px-4">To change logo: Click "Edit" button above → Update "Logo URL" field</p>
+       </div>
+      </div>
+     </div><!-- Form Title (Centered and Larger) -->
+     <div class="text-center">
+      <h2 class="text-4xl md:text-5xl font-bold text-white mb-4" id="form-title">GST Registration Portal (CMTE)</h2>
+      <p class="text-white/80 text-sm md:text-base max-w-2xl mx-auto">Please fill in the required information to begin your GST registration process</p>
+     </div>
+    </header><!-- Main Form Card -->
+    <div id="form-container" class="glass-effect rounded-3xl p-6 md:p-10 mb-6">
+     <form id="gst-form" class="space-y-6"><!-- Client Information Section -->
+      <div>
+       <h3 class="text-xl font-semibold mb-4 flex items-center gap-2" style="color: #333333;">
+        <svg class="w-6 h-6" style="color: #D60000;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg> Client Information</h3>
+       <div class="grid md:grid-cols-2 gap-5">
+        <div><label for="client-name" class="block text-sm font-medium mb-2" style="color: #333333;"> Client Name <span style="color: #D60000;">*</span> </label> <input type="text" id="client-name" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none" placeholder="Enter full name">
+        </div>
+        <div><label for="business-name" class="block text-sm font-medium mb-2" style="color: #333333;"> Business Name <span style="color: #D60000;">*</span> </label> <input type="text" id="business-name" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none" placeholder="Enter business name">
+        </div>
+       </div>
+      </div><!-- Business Details Section -->
+      <div>
+       <h3 class="text-xl font-semibold mb-4 flex items-center gap-2" style="color: #333333;">
+        <svg class="w-6 h-6" style="color: #D60000;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg> Business Details</h3>
+       <div class="space-y-5">
+        <div><label for="business-activity" class="block text-sm font-medium mb-2" style="color: #333333;"> Business Activity <span style="color: #D60000;">*</span> </label> <input type="text" id="business-activity" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none" placeholder="e.g., Retail Trading, Manufacturing, Services">
+        </div>
+        <div class="grid md:grid-cols-2 gap-5">
+         <div><label for="business-mobile" class="block text-sm font-medium mb-2" style="color: #333333;"> Business Mobile No <span style="color: #D60000;">*</span> </label> <input type="tel" id="business-mobile" required pattern="[0-9]{10}" class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none" placeholder="10-digit mobile number">
+         </div>
+         <div><label for="business-email" class="block text-sm font-medium mb-2" style="color: #333333;"> Business Email ID <span style="color: #D60000;">*</span> </label> <input type="email" id="business-email" required class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none" placeholder="business@example.com">
+         </div>
+        </div>
+       </div>
+      </div><!-- Constitution Section -->
+      <div>
+       <h3 class="text-xl font-semibold mb-4 flex items-center gap-2" style="color: #333333;">
+        <svg class="w-6 h-6" style="color: #D60000;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg> Constitution of Business</h3>
+       <div class="grid md:grid-cols-2 gap-4"><label class="cursor-pointer"> <input type="radio" name="constitution" value="proprietorship" class="peer sr-only" required>
+         <div class="p-5 border-2 border-gray-200 rounded-xl peer-checked:bg-white peer-checked:border-[#D60000] hover:border-gray-300 transition-all">
+          <div class="flex items-center gap-3">
+           <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:border-[#D60000] peer-checked:bg-[#D60000]">
+            <div class="w-2 h-2 bg-white rounded-full"></div>
+           </div>
+           <div>
+            <p class="font-semibold" style="color: #333333;">Proprietorship</p>
+            <p class="text-xs" style="color: #6B6B6B;">Single owner</p>
+           </div>
+          </div>
+         </div></label> <label class="cursor-pointer"> <input type="radio" name="constitution" value="partnership" class="peer sr-only">
+         <div class="p-5 border-2 border-gray-200 rounded-xl peer-checked:bg-white peer-checked:border-[#D60000] hover:border-gray-300 transition-all">
+          <div class="flex items-center gap-3">
+           <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:border-[#D60000] peer-checked:bg-[#D60000]">
+            <div class="w-2 h-2 bg-white rounded-full"></div>
+           </div>
+           <div>
+            <p class="font-semibold" style="color: #333333;">Partnership</p>
+            <p class="text-xs" style="color: #6B6B6B;">Multiple partners</p>
+           </div>
+          </div>
+         </div></label>
+       </div>
+      </div><!-- Proprietorship Details (Conditional) -->
+      <div id="proprietorship-section" class="hidden space-y-5">
+       <h4 class="text-lg font-semibold mb-3 flex items-center gap-2" style="color: #333333;">
+        <svg class="w-5 h-5" style="color: #D60000;" fill="currentColor" viewbox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+        </svg> Proprietor Details</h4>
+       <div class="grid md:grid-cols-2 gap-5">
+        <div><label for="proprietor-contact" class="block text-sm font-medium mb-2" style="color: #333333;"> Proprietor Contact No <span style="color: #D60000;">*</span> </label> <input type="tel" id="proprietor-contact" pattern="[0-9]{10}" class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none" placeholder="10-digit mobile number">
+        </div>
+        <div><label for="proprietor-email" class="block text-sm font-medium mb-2" style="color: #333333;"> Proprietor Email ID <span style="color: #D60000;">*</span> </label> <input type="email" id="proprietor-email" class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none" placeholder="proprietor@example.com">
+        </div>
+       </div>
+      </div><!-- Partnership Details (Conditional) -->
+      <div id="partnership-section" class="hidden">
+       <div class="flex items-center justify-between mb-4">
+        <h4 class="text-lg font-semibold flex items-center gap-2" style="color: #333333;">
+         <svg class="w-5 h-5" style="color: #D60000;" fill="currentColor" viewbox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+         </svg> Partner Details</h4><button type="button" id="add-partner-btn" class="px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 text-sm" style="background-color: white; color: #D60000; border: 2px solid #D60000;">
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+         </svg> Add Partner </button>
+       </div>
+       <div id="partners-container" class="space-y-4"><!-- Partners will be added dynamically -->
+       </div>
+      </div><!-- Document Upload Section -->
+      <div id="documents-section" class="hidden">
+       <h3 class="text-xl font-semibold mb-4 flex items-center gap-2" style="color: #333333;">
+        <svg class="w-6 h-6" style="color: #D60000;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+        </svg> Upload Required Documents</h3>
+       <div class="space-y-4"><!-- Proprietor/Partner Photos -->
+        <div id="photo-upload-section"><label class="block text-sm font-medium mb-2" style="color: #333333;"> <span id="photo-label">Photo of Proprietor/Partners</span> <span style="color: #D60000;">*</span> </label>
+         <div class="relative"><input type="file" id="photo-upload" accept="image/*" multiple class="hidden"> <button type="button" onclick="document.getElementById('photo-upload').click()" class="w-full px-4 py-4 border-2 border-dashed border-gray-300 rounded-xl transition-all bg-white flex items-center justify-center gap-2 hover:border-[#D60000]" style="color: #6B6B6B;">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+           </svg><span id="photo-upload-text">Click to upload photos</span> </button>
+         </div>
+         <p id="photo-files-list" class="text-sm mt-2" style="color: #6B6B6B;"></p>
+        </div><!-- Building Tax Receipt -->
+        <div><label class="block text-sm font-medium mb-2" style="color: #333333;"> Building Tax Receipt <span style="color: #D60000;">*</span> </label>
+         <div class="relative"><input type="file" id="tax-receipt-upload" accept=".pdf,.jpg,.jpeg,.png" class="hidden"> <button type="button" onclick="document.getElementById('tax-receipt-upload').click()" class="w-full px-4 py-4 border-2 border-dashed border-gray-300 rounded-xl transition-all bg-white flex items-center justify-center gap-2 hover:border-[#D60000]" style="color: #6B6B6B;">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+           </svg><span id="tax-upload-text">Click to upload receipt</span> </button>
+         </div>
+         <p id="tax-file-name" class="text-sm mt-2" style="color: #6B6B6B;"></p>
+        </div><!-- Rental Agreement -->
+        <div><label class="block text-sm font-medium mb-2" style="color: #333333;"> Rental Agreement (INR 500 Stamp Paper) <span style="color: #D60000;">*</span> </label>
+         <div class="relative"><input type="file" id="rental-agreement-upload" accept=".pdf,.jpg,.jpeg,.png" class="hidden"> <button type="button" onclick="document.getElementById('rental-agreement-upload').click()" class="w-full px-4 py-4 border-2 border-dashed border-gray-300 rounded-xl transition-all bg-white flex items-center justify-center gap-2 hover:border-[#D60000]" style="color: #6B6B6B;">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+           </svg><span id="rental-upload-text">Click to upload agreement</span> </button>
+         </div>
+         <p id="rental-file-name" class="text-sm mt-2" style="color: #6B6B6B;"></p>
+        </div><!-- Trade Licence (Optional) -->
+        <div><label class="block text-sm font-medium mb-2" style="color: #333333;"> Trade Licence <span style="color: #6B6B6B;">(Optional)</span> </label>
+         <div class="relative"><input type="file" id="trade-licence-upload" accept=".pdf,.jpg,.jpeg,.png" class="hidden"> <button type="button" onclick="document.getElementById('trade-licence-upload').click()" class="w-full px-4 py-4 border-2 border-dashed border-gray-300 rounded-xl transition-all bg-white flex items-center justify-center gap-2 hover:border-[#D60000]" style="color: #6B6B6B;">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+           </svg><span id="trade-upload-text">Click to upload licence</span> </button>
+         </div>
+         <p id="trade-file-name" class="text-sm mt-2" style="color: #6B6B6B;"></p>
+        </div><!-- Aadhaar Card -->
+        <div><label class="block text-sm font-medium mb-2" style="color: #333333;"> Aadhaar Card <span style="color: #D60000;">*</span> </label>
+         <div class="relative"><input type="file" id="aadhaar-upload" accept=".pdf,.jpg,.jpeg,.png" class="hidden"> <button type="button" onclick="document.getElementById('aadhaar-upload').click()" class="w-full px-4 py-4 border-2 border-dashed border-gray-300 rounded-xl transition-all bg-white flex items-center justify-center gap-2 hover:border-[#D60000]" style="color: #6B6B6B;">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+           </svg><span id="aadhaar-upload-text">Click to upload Aadhaar</span> </button>
+         </div>
+         <p id="aadhaar-file-name" class="text-sm mt-2" style="color: #6B6B6B;"></p>
+        </div><!-- PAN Card -->
+        <div><label class="block text-sm font-medium mb-2" style="color: #333333;"> PAN Card <span style="color: #D60000;">*</span> </label>
+         <div class="relative"><input type="file" id="pan-upload" accept=".pdf,.jpg,.jpeg,.png" class="hidden"> <button type="button" onclick="document.getElementById('pan-upload').click()" class="w-full px-4 py-4 border-2 border-dashed border-gray-300 rounded-xl transition-all bg-white flex items-center justify-center gap-2 hover:border-[#D60000]" style="color: #6B6B6B;">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+           </svg><span id="pan-upload-text">Click to upload PAN</span> </button>
+         </div>
+         <p id="pan-file-name" class="text-sm mt-2" style="color: #6B6B6B;"></p>
+        </div><!-- Business PAN -->
+        <div><label class="block text-sm font-medium mb-2" style="color: #333333;"> Business PAN <span style="color: #D60000;">*</span> </label>
+         <div class="relative"><input type="file" id="business-pan-upload" accept=".pdf,.jpg,.jpeg,.png" class="hidden"> <button type="button" onclick="document.getElementById('business-pan-upload').click()" class="w-full px-4 py-4 border-2 border-dashed border-gray-300 rounded-xl transition-all bg-white flex items-center justify-center gap-2 hover:border-[#D60000]" style="color: #6B6B6B;">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+           </svg><span id="business-pan-upload-text">Click to upload Business PAN</span> </button>
+         </div>
+         <p id="business-pan-file-name" class="text-sm mt-2" style="color: #6B6B6B;"></p>
+        </div>
+       </div>
+      </div><!-- Payment Section -->
+      <div id="payment-section" class="hidden">
+       <h3 class="text-xl font-semibold mb-4 flex items-center gap-2" style="color: #333333;">
+        <svg class="w-6 h-6" style="color: #D60000;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg> Payment Details</h3>
+       <div class="rounded-xl p-6" style="background-color: white; border: 2px solid #D60000;">
+        <div class="grid md:grid-cols-2 gap-6">
+         <div>
+          <div class="space-y-2">
+           <p class="text-sm font-medium" style="color: #333333;">Pay using UPI:</p>
+           <div class="flex items-center gap-2 p-3 rounded-lg" style="background-color: #FFF5F5;">
+            <svg class="w-5 h-5" style="color: #D60000;" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+            </svg><code class="text-sm font-mono" style="color: #333333;">cmtaxexperts@ybl</code>
+           </div><a href="upi://pay?pa=cmtaxexperts@ybl&amp;pn=CM Tax Experts&amp;am=" id="upi-payment-link" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all text-white mt-2" style="background-color: #D60000;">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg> Pay Now via UPI </a>
+          </div>
+         </div>
+         <div class="flex items-center justify-center">
+          <div class="bg-white p-4 rounded-xl border-2" style="border-color: #D60000;">
+           <div id="qr-code-container"></div>
+           <p class="text-xs text-center mt-2" style="color: #6B6B6B;">Scan to pay</p>
+          </div>
+         </div>
+        </div>
+        <div class="mt-4 p-4 rounded-lg" style="background-color: #FFF5F5;">
+         <p class="text-sm" style="color: #333333;"><strong>Note:</strong> Please complete the payment before submitting the form. Once payment is done, submit this form with all required documents.</p>
+        </div><!-- Payment Receipt Upload -->
+        <div class="mt-6"><label class="block text-sm font-medium mb-2" style="color: #333333;"> Upload Payment Receipt <span style="color: #D60000;">*</span> </label>
+         <div class="relative"><input type="file" id="payment-receipt-upload" accept=".pdf,.jpg,.jpeg,.png" required class="hidden"> <button type="button" onclick="document.getElementById('payment-receipt-upload').click()" class="w-full px-4 py-4 border-2 border-dashed border-gray-300 rounded-xl transition-all bg-white flex items-center justify-center gap-2 hover:border-[#D60000]" style="color: #6B6B6B;">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+           </svg><span id="payment-receipt-upload-text">Click to upload payment receipt</span> </button>
+         </div>
+         <p id="payment-receipt-file-name" class="text-sm mt-2" style="color: #6B6B6B;"></p>
+        </div>
+       </div>
+      </div><!-- Submit Button -->
+      <div class="pt-6"><button type="submit" id="submit-btn" class="submit-btn w-full py-4 px-6 text-white font-semibold text-lg rounded-xl focus:outline-none focus:ring-4 transition-all duration-300 flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #D60000 0%, #333333 100%);"> <span id="submit-text">Submit Documents</span>
+        <svg id="submit-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+        <div id="submit-spinner" class="spinner hidden"></div></button>
+      </div>
+     </form>
+    </div><!-- Success Message (Hidden by default) -->
+    <div id="success-container" class="hidden glass-effect rounded-3xl p-8 md:p-12 text-center">
+     <div class="success-checkmark w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center" style="background-color: #D60000;">
+      <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+      </svg>
+     </div>
+     <h3 class="text-2xl md:text-3xl font-bold mb-3" style="color: #333333;">Submission Successful!</h3>
+     <p class="text-lg mb-6" style="color: #6B6B6B;" id="success-message-text">Thank you! We'll contact you shortly.</p>
+     <p class="text-sm mb-6" style="color: #6B6B6B;">Your reference number: <span id="reference-number" class="font-semibold" style="color: #D60000;"></span></p><button id="submit-another-btn" class="px-8 py-3 text-white font-semibold rounded-xl transition-all" style="background: linear-gradient(135deg, #D60000 0%, #333333 100%);"> Submit Another Application </button>
+    </div><!-- Footer -->
+    <footer class="text-center mt-8 text-white/70 text-sm">
+     <p>© 2026 CM Tax Experts. All rights reserved.</p>
+    </footer>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      logo_url: 'https://i.ibb.co/5gvnHQMT/CMTE-LOGI-IN-DARK-BG.png',
+      logo_size: '256',
+      form_title: 'GST Registration Portal (CMTE)',
+      submit_button_text: 'Submit Documents',
+      success_message: "Thank you! We'll contact you shortly."
+    };
+    
+    let config = { ...defaultConfig };
+    let partnerCount = 0;
+    let submissionCount = 0;
+    let uploadedFiles = {};
+    let qrCode = null;
+    
+    // Generate QR Code
+    function generateQRCode(amount) {
+      const upiString = `upi://pay?pa=cmtaxexperts@ybl&pn=CM Tax Experts&am=${amount}&cu=INR`;
+      const container = document.getElementById('qr-code-container');
+      container.innerHTML = '';
+      
+      if (window.QRCode) {
+        qrCode = new QRCode(container, {
+          text: upiString,
+          width: 160,
+          height: 160,
+          colorDark: "#D60000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
+    }
+    
+    // Data Handler
+    const dataHandler = {
+      onDataChanged(data) {
+        console.log('Submissions count:', data.length);
+      }
+    };
+    
+    // Initialize Data SDK
+    async function initDataSdk() {
+      const result = await window.dataSdk.init(dataHandler);
+      if (!result.isOk) {
+        console.error('Failed to initialize data SDK');
+      }
+    }
+    
+    // Constitution radio buttons
+    const constitutionRadios = document.querySelectorAll('input[name="constitution"]');
+    const proprietorshipSection = document.getElementById('proprietorship-section');
+    const partnershipSection = document.getElementById('partnership-section');
+    const documentsSection = document.getElementById('documents-section');
+    const paymentSection = document.getElementById('payment-section');
+    
+    constitutionRadios.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const photoLabel = document.getElementById('photo-label');
+        const upiLink = document.getElementById('upi-payment-link');
+        
+        documentsSection.classList.remove('hidden');
+        paymentSection.classList.remove('hidden');
+        
+        let amount = '';
+        
+        if (e.target.value === 'proprietorship') {
+          proprietorshipSection.classList.remove('hidden');
+          partnershipSection.classList.add('hidden');
+          document.getElementById('proprietor-contact').required = true;
+          document.getElementById('proprietor-email').required = true;
+          amount = '3000';
+          photoLabel.textContent = 'Photo of Proprietor';
+          clearPartnerFields();
+        } else {
+          proprietorshipSection.classList.add('hidden');
+          partnershipSection.classList.remove('hidden');
+          document.getElementById('proprietor-contact').required = false;
+          document.getElementById('proprietor-email').required = false;
+          amount = '4000';
+          photoLabel.textContent = 'Photos of Partners';
+          if (partnerCount === 0) {
+            addPartner();
+          }
+        }
+        
+        // Update UPI link and QR code with amount
+        upiLink.href = `upi://pay?pa=cmtaxexperts@ybl&pn=CM Tax Experts&am=${amount}&cu=INR`;
+        generateQRCode(amount);
+      });
+    });
+    
+    // File upload handlers
+    document.getElementById('photo-upload').addEventListener('change', function(e) {
+      const files = e.target.files;
+      const fileList = document.getElementById('photo-files-list');
+      if (files.length > 0) {
+        uploadedFiles.photos = files;
+        const names = Array.from(files).map(f => f.name).join(', ');
+        fileList.textContent = `✓ ${files.length} file(s) selected: ${names}`;
+        fileList.style.color = '#D60000';
+        document.getElementById('photo-upload-text').textContent = `${files.length} photo(s) selected`;
+      }
+    });
+    
+    document.getElementById('tax-receipt-upload').addEventListener('change', function(e) {
+      if (e.target.files[0]) {
+        uploadedFiles.taxReceipt = e.target.files[0];
+        document.getElementById('tax-file-name').textContent = `✓ ${e.target.files[0].name}`;
+        document.getElementById('tax-file-name').style.color = '#D60000';
+        document.getElementById('tax-upload-text').textContent = 'File selected';
+      }
+    });
+    
+    document.getElementById('rental-agreement-upload').addEventListener('change', function(e) {
+      if (e.target.files[0]) {
+        uploadedFiles.rentalAgreement = e.target.files[0];
+        document.getElementById('rental-file-name').textContent = `✓ ${e.target.files[0].name}`;
+        document.getElementById('rental-file-name').style.color = '#D60000';
+        document.getElementById('rental-upload-text').textContent = 'File selected';
+      }
+    });
+    
+    document.getElementById('trade-licence-upload').addEventListener('change', function(e) {
+      if (e.target.files[0]) {
+        uploadedFiles.tradeLicence = e.target.files[0];
+        document.getElementById('trade-file-name').textContent = `✓ ${e.target.files[0].name}`;
+        document.getElementById('trade-file-name').style.color = '#D60000';
+        document.getElementById('trade-upload-text').textContent = 'File selected';
+      }
+    });
+    
+    document.getElementById('aadhaar-upload').addEventListener('change', function(e) {
+      if (e.target.files[0]) {
+        uploadedFiles.aadhaar = e.target.files[0];
+        document.getElementById('aadhaar-file-name').textContent = `✓ ${e.target.files[0].name}`;
+        document.getElementById('aadhaar-file-name').style.color = '#D60000';
+        document.getElementById('aadhaar-upload-text').textContent = 'File selected';
+      }
+    });
+    
+    document.getElementById('pan-upload').addEventListener('change', function(e) {
+      if (e.target.files[0]) {
+        uploadedFiles.pan = e.target.files[0];
+        document.getElementById('pan-file-name').textContent = `✓ ${e.target.files[0].name}`;
+        document.getElementById('pan-file-name').style.color = '#D60000';
+        document.getElementById('pan-upload-text').textContent = 'File selected';
+      }
+    });
+    
+    document.getElementById('business-pan-upload').addEventListener('change', function(e) {
+      if (e.target.files[0]) {
+        uploadedFiles.businessPan = e.target.files[0];
+        document.getElementById('business-pan-file-name').textContent = `�� ${e.target.files[0].name}`;
+        document.getElementById('business-pan-file-name').style.color = '#D60000';
+        document.getElementById('business-pan-upload-text').textContent = 'File selected';
+      }
+    });
+    
+    document.getElementById('payment-receipt-upload').addEventListener('change', function(e) {
+      if (e.target.files[0]) {
+        uploadedFiles.paymentReceipt = e.target.files[0];
+        document.getElementById('payment-receipt-file-name').textContent = `✓ ${e.target.files[0].name}`;
+        document.getElementById('payment-receipt-file-name').style.color = '#D60000';
+        document.getElementById('payment-receipt-upload-text').textContent = 'File selected';
+      }
+    });
+    
+    // Add Partner functionality
+    function addPartner() {
+      partnerCount++;
+      const partnersContainer = document.getElementById('partners-container');
+      
+      const partnerCard = document.createElement('div');
+      partnerCard.className = 'partner-card p-5 bg-white border-2 rounded-xl';
+      partnerCard.style.borderColor = '#E5E7EB';
+      partnerCard.dataset.partnerIndex = partnerCount;
+      
+      partnerCard.innerHTML = `
+        <div class="flex items-center justify-between mb-4">
+          <h5 class="font-semibold" style="color: #333333;">Partner ${partnerCount}</h5>
+          ${partnerCount > 1 ? `
+            <button type="button" class="remove-partner-btn transition-colors" style="color: #D60000;" data-partner-index="${partnerCount}">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+            </button>
+          ` : ''}
+        </div>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-2" style="color: #333333;">
+              Name <span style="color: #D60000;">*</span>
+            </label>
+            <input 
+              type="text" 
+              class="partner-name input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none"
+              placeholder="Partner name"
+              required
+            >
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2" style="color: #333333;">
+              Contact No <span style="color: #D60000;">*</span>
+            </label>
+            <input 
+              type="tel" 
+              class="partner-contact input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none"
+              placeholder="10-digit number"
+              pattern="[0-9]{10}"
+              required
+            >
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2" style="color: #333333;">
+              Email ID <span style="color: #D60000;">*</span>
+            </label>
+            <input 
+              type="email" 
+              class="partner-email input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none"
+              placeholder="partner@example.com"
+              required
+            >
+          </div>
+        </div>
+      `;
+      
+      partnersContainer.appendChild(partnerCard);
+      
+      const removeBtn = partnerCard.querySelector('.remove-partner-btn');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', () => removePartner(partnerCount));
+      }
+    }
+    
+    function removePartner(index) {
+      const partnerCard = document.querySelector(`[data-partner-index="${index}"]`);
+      if (partnerCard) {
+        partnerCard.remove();
+      }
+    }
+    
+    function clearPartnerFields() {
+      const partnersContainer = document.getElementById('partners-container');
+      partnersContainer.innerHTML = '';
+      partnerCount = 0;
+    }
+    
+    document.getElementById('add-partner-btn').addEventListener('click', addPartner);
+    
+    // Form submission
+    document.getElementById('gst-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submit-btn');
+      const submitText = document.getElementById('submit-text');
+      const submitIcon = document.getElementById('submit-icon');
+      const submitSpinner = document.getElementById('submit-spinner');
+      
+      submitBtn.disabled = true;
+      submitText.textContent = 'Submitting...';
+      submitIcon.classList.add('hidden');
+      submitSpinner.classList.remove('hidden');
+      
+      const constitution = document.querySelector('input[name="constitution"]:checked').value;
+      
+      const formData = {
+        client_name: document.getElementById('client-name').value,
+        business_name: document.getElementById('business-name').value,
+        business_activity: document.getElementById('business-activity').value,
+        business_mobile: document.getElementById('business-mobile').value,
+        business_email: document.getElementById('business-email').value,
+        constitution: constitution,
+        proprietor_contact: constitution === 'proprietorship' ? document.getElementById('proprietor-contact').value : '',
+        proprietor_email: constitution === 'proprietorship' ? document.getElementById('proprietor-email').value : '',
+        partners_data: constitution === 'partnership' ? collectPartnerData() : '',
+        submitted_at: new Date().toISOString()
+      };
+      
+      const result = await window.dataSdk.create(formData);
+      
+      if (result.isOk) {
+        submissionCount++;
+        showSuccessMessage();
+      } else {
+        showErrorMessage();
+        submitBtn.disabled = false;
+        submitText.textContent = config.submit_button_text || defaultConfig.submit_button_text;
+        submitIcon.classList.remove('hidden');
+        submitSpinner.classList.add('hidden');
+      }
+    });
+    
+    function collectPartnerData() {
+      const partners = [];
+      const partnerCards = document.querySelectorAll('.partner-card');
+      
+      partnerCards.forEach((card, index) => {
+        partners.push({
+          name: card.querySelector('.partner-name').value,
+          contact: card.querySelector('.partner-contact').value,
+          email: card.querySelector('.partner-email').value
+        });
+      });
+      
+      return JSON.stringify(partners);
+    }
+    
+    function showSuccessMessage() {
+      document.getElementById('form-container').classList.add('hidden');
+      document.getElementById('success-container').classList.remove('hidden');
+      document.getElementById('reference-number').textContent = `GST${Date.now().toString().slice(-8)}`;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function showErrorMessage() {
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'fixed top-4 right-4 text-white px-6 py-4 rounded-xl shadow-lg z-50';
+      errorDiv.style.backgroundColor = '#D60000';
+      errorDiv.innerHTML = `
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span>Submission failed. Please try again.</span>
+        </div>
+      `;
+      document.body.appendChild(errorDiv);
+      
+      setTimeout(() => {
+        errorDiv.remove();
+      }, 4000);
+    }
+    
+    document.getElementById('submit-another-btn').addEventListener('click', () => {
+      document.getElementById('form-container').classList.remove('hidden');
+      document.getElementById('success-container').classList.add('hidden');
+      document.getElementById('gst-form').reset();
+      proprietorshipSection.classList.add('hidden');
+      partnershipSection.classList.add('hidden');
+      documentsSection.classList.add('hidden');
+      paymentSection.classList.add('hidden');
+      clearPartnerFields();
+      uploadedFiles = {};
+      
+      const submitBtn = document.getElementById('submit-btn');
+      const submitText = document.getElementById('submit-text');
+      const submitIcon = document.getElementById('submit-icon');
+      const submitSpinner = document.getElementById('submit-spinner');
+      
+      submitBtn.disabled = false;
+      submitText.textContent = config.submit_button_text || defaultConfig.submit_button_text;
+      submitIcon.classList.remove('hidden');
+      submitSpinner.classList.add('hidden');
+      
+      // Reset file upload displays
+      document.getElementById('photo-files-list').textContent = '';
+      document.getElementById('tax-file-name').textContent = '';
+      document.getElementById('rental-file-name').textContent = '';
+      document.getElementById('trade-file-name').textContent = '';
+      document.getElementById('aadhaar-file-name').textContent = '';
+      document.getElementById('pan-file-name').textContent = '';
+      document.getElementById('business-pan-file-name').textContent = '';
+      document.getElementById('payment-receipt-file-name').textContent = '';
+      
+      document.getElementById('photo-upload-text').textContent = 'Click to upload photos';
+      document.getElementById('tax-upload-text').textContent = 'Click to upload receipt';
+      document.getElementById('rental-upload-text').textContent = 'Click to upload agreement';
+      document.getElementById('trade-upload-text').textContent = 'Click to upload licence';
+      document.getElementById('aadhaar-upload-text').textContent = 'Click to upload Aadhaar';
+      document.getElementById('pan-upload-text').textContent = 'Click to upload PAN';
+      document.getElementById('business-pan-upload-text').textContent = 'Click to upload Business PAN';
+      document.getElementById('payment-receipt-upload-text').textContent = 'Click to upload payment receipt';
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // Element SDK functions
+    async function onConfigChange(newConfig) {
+      config = { ...defaultConfig, ...newConfig };
+      
+      // Update logo
+      const logoContainer = document.getElementById('logo-container');
+      const logoImage = document.getElementById('logo-image');
+      
+      if (config.logo_url && config.logo_url.trim() !== '') {
+        logoImage.src = config.logo_url;
+        logoContainer.classList.remove('hidden');
+        
+        // Update logo size
+        const logoSize = parseInt(config.logo_size || defaultConfig.logo_size) || 256;
+        logoContainer.style.width = `${logoSize}px`;
+        logoContainer.style.height = `${logoSize}px`;
+      } else {
+        logoContainer.classList.add('hidden');
+      }
+      
+      // Update text content
+      document.getElementById('form-title').textContent = config.form_title || defaultConfig.form_title;
+      document.getElementById('submit-text').textContent = config.submit_button_text || defaultConfig.submit_button_text;
+      document.getElementById('success-message-text').textContent = config.success_message || defaultConfig.success_message;
+    }
+    
+    function mapToCapabilities(cfg) {
+      return {
+        recolorables: [],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      };
+    }
+    
+    function mapToEditPanelValues(cfg) {
+      return new Map([
+        ['logo_url', cfg.logo_url || defaultConfig.logo_url],
+        ['logo_size', cfg.logo_size || defaultConfig.logo_size],
+        ['form_title', cfg.form_title || defaultConfig.form_title],
+        ['submit_button_text', cfg.submit_button_text || defaultConfig.submit_button_text],
+        ['success_message', cfg.success_message || defaultConfig.success_message]
+      ]);
+    }
+    
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+    
+    if (window.dataSdk) {
+      initDataSdk();
+    }
+ <script>
+  // ✅ GOOGLE APPS SCRIPT BACKEND
+  const WEBAPP_URL =
+    "https://script.google.com/macros/s/AKfycbxM4G2bplwQ26st-D7nJuySvLoS4o1hmZdrkC31W0MQ6hHhG2NYexokfHa-BwYAfpsl/exec";
+
+  // keep all your existing JS BELOW this line
+</script>
